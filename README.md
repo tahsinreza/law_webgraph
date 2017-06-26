@@ -1,1 +1,1 @@
-# law_webgraph
+#Forked from the WebGraph project (http://webgraph.di.unimi.it/).

@@ -19,14 +19,14 @@ package law.webgraph.generator;
  */
 
 
-import it.unimi.dsi.big.webgraph.GraphClassParser;
-import it.unimi.dsi.big.webgraph.ImmutableGraph;
-import it.unimi.dsi.big.webgraph.LazyLongIterator;
-import it.unimi.dsi.big.webgraph.NodeIterator;
-import it.unimi.dsi.big.webgraph.examples.IntegerTriplesArcLabelledImmutableGraph;
-import it.unimi.dsi.big.webgraph.labelling.ArcLabelledImmutableGraph;
-import it.unimi.dsi.big.webgraph.labelling.ArcLabelledNodeIterator;
-import it.unimi.dsi.big.webgraph.labelling.Label;
+import it.unimi.dsi.webgraph.GraphClassParser;
+import it.unimi.dsi.webgraph.ImmutableGraph;
+import it.unimi.dsi.webgraph.LazyIntIterator;
+import it.unimi.dsi.webgraph.NodeIterator;
+import it.unimi.dsi.webgraph.examples.IntegerTriplesArcLabelledImmutableGraph;
+import it.unimi.dsi.webgraph.labelling.ArcLabelledImmutableGraph;
+import it.unimi.dsi.webgraph.labelling.ArcLabelledNodeIterator;
+import it.unimi.dsi.webgraph.labelling.Label;
 import it.unimi.dsi.fastutil.io.TextIO;
 import it.unimi.dsi.fastutil.longs.LongBigArrays;
 import it.unimi.dsi.law.webgraph.CompressedIntLabel;
@@ -99,38 +99,42 @@ public class MetadataEdgeListGenerator {
 /*		long tmpNodeCounter = 0;
 		//while(nodeIter.hasNext() && tmpNodeCounter++ < 10) {
 		while(nodeIter.hasNext()) {			
-			long nodeID = nodeIter.nextLong();
+			long nodeID = nodeIter.nextInt();
 			long neighborCount = nodeIter.outdegree();
-//			LazyLongIterator edgeIter = nodeIter.successors();
-			ArcLabelledNodeIterator.LabelledArcIterator edgeIter = nodeIter.successors();
+			LazyIntIterator edgeIter = nodeIter.successors();
+//--			ArcLabelledNodeIterator.LabelledArcIterator edgeIter = nodeIter.successors();
 			
 			//System.out.println(nodeID + "," + neighborCount + ",");
 			for (long e = 0; e < neighborCount; e++) {
 				//System.out.println(nodeID + "," + edgeIter.nextLong() + "," + neighborCount);
 				//edgeListFileWriter.write(nodeID + "," + edgeIter.nextLong() + "," + neighborCount + "\n");
-				long sourceLabel = 0;
-				long edgeLabel = 0;
-				edgeListFileWriter.write(nodeID + "," + edgeIter.nextLong() + "," + sourceLabel + "," + edgeLabel + "\n");
+				long sourceLabel = 555;
+				long edgeLabel = 555;
+				edgeListFileWriter.write(nodeID + "," + edgeIter.nextInt() + "," + sourceLabel + "," + edgeLabel + "\n");
 			}
 		}*/
 		
 		// using LazyIterator		
 		while(nodeIter.hasNext()) {
-			long nodeID = nodeIter.nextLong();
+			long nodeID = nodeIter.nextInt();
 			long neighborCount = nodeIter.outdegree();			
-			ArcLabelledNodeIterator.LabelledArcIterator	edgeIter = graph.successors(nodeID); 
+			ArcLabelledNodeIterator.LabelledArcIterator	edgeIter = graph.successors((int)nodeID); 
 			// Exception: Random access to successor lists is not possible with sequential or offline graphs
 			
-//			ArcLabelledNodeIterator.LabelledArcIterator edgeIter = nodeIter.successors();
+			//ArcLabelledNodeIterator.LabelledArcIterator edgeIter = nodeIter.successors();
 			
 //			Label[][] labelArray = graph.labelBigArray(nodeID);
+			Label[] labelArray = graph.labelArray((int)nodeID);
 			for (long e = 0; e < neighborCount; e++) {
-				long targetID = edgeIter.nextLong();
+				long targetID = edgeIter.nextInt();
 				long sourceLabel = 0;
 //				Label edgeLabel = edgeIter.label();
 				CompressedIntLabel edgeLabel =  (CompressedIntLabel)edgeIter.label();
 //				Label edgeLabel = labelArray[(int)e][0];
-				edgeListFileWriter.write(nodeID + "," + targetID + "," + sourceLabel + "," + edgeLabel.toString() + "\n");
+				edgeListFileWriter.write(nodeID + "," + targetID + "," + sourceLabel + "," + 
+					edgeLabel.getInt() + "," + labelArray[(int)e].wellKnownAttributeKey() + 
+					"," + labelArray[(int)e].attributeKeys()[0] +
+					"," + labelArray[(int)e].get().toString() + "\n");
 			}			
 		}
 				
